@@ -1,16 +1,14 @@
 #pragma once
-
 #include "common.h"
 
 class AccessControl
 {
-public:
+protected:
 
-    ResposeData AssignRole(int id, ROLE role);
-	ResposeData BanUser(int sender, int user);
-	ResposeData UnBanUser(int sender, int user);
-	ResposeData RegisterNewUser(int sender, int newUser);
-	ResposeData GrantModeratorRole(int sender, int user);
-	ResposeData GrantAdminRole(int sender, int user);
-    AccessControl();
+	AccessControl();
+	ResposeData AC_BanUser(int sender, int user);
+	ResposeData AC_UnBanUser(int sender, int user);
+	ResposeData AC_RegisterNewUser(int sender, int newUser);
+	ResposeData AC_GrantModeratorRole(int sender, int user);
+	ResposeData AC_GrantAdminRole(int sender, int user);
 };

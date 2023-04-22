@@ -3,7 +3,7 @@
 AccessControl::AccessControl()
 {}
 
-ResposeData AccessControl::BanUser(int sender, int user)
+ResposeData AccessControl::AC_BanUser(int sender, int user)
 {
 	ResposeData response;
 	response.Response = "";
@@ -18,7 +18,13 @@ ResposeData AccessControl::BanUser(int sender, int user)
 		return response;
 	}
 
-	if (Sender->second != ROLE::Admin || Sender->second != ROLE::Moderator)
+	if (User->second == ROLE::Banned)
+	{
+		response.Response = "ERROR: User is already banned!";
+		return response;
+	}
+
+	if (Sender->second != ROLE::Admin && Sender->second != ROLE::Moderator)
 	{
 		response.Response = "ERROR: Sender is not admin or moderator!";
 		return response;
@@ -36,7 +42,7 @@ ResposeData AccessControl::BanUser(int sender, int user)
 	return response;
 }
 
-ResposeData AccessControl::UnBanUser(int sender, int user)
+ResposeData AccessControl::AC_UnBanUser(int sender, int user)
 {
 	ResposeData response;
 	response.Response = "";
@@ -51,15 +57,15 @@ ResposeData AccessControl::UnBanUser(int sender, int user)
 		return response;
 	}
 
-	if (Sender->second != ROLE::Admin || Sender->second != ROLE::Moderator)
-	{
-		response.Response = "ERROR: Sender is not admin or moderator!";
-		return response;
-	}
-
 	if (User->second != ROLE::Banned)
 	{
 		response.Response = "ERROR: User is not banned!";
+		return response;
+	}
+
+	if (Sender->second != ROLE::Admin && Sender->second != ROLE::Moderator)
+	{
+		response.Response = "ERROR: Sender is not admin or moderator!";
 		return response;
 	}
 
@@ -69,53 +75,49 @@ ResposeData AccessControl::UnBanUser(int sender, int user)
 	return response;
 }
 
-ResposeData AccessControl::RegisterNewUser(int sender, int newUser)
+ResposeData AccessControl::AC_RegisterNewUser(int sender, int newUser)
 {
 	ResposeData response;
 	response.Response = "";
 	response.Success = false;
 
-	return response;
-}
+	auto User = Database.find(newUser);
 
-ResposeData AccessControl::GrantModeratorRole(int sender, int user)
-{
-	ResposeData response;
-	response.Response = "";
-	response.Success = false;
-
-	return response;
-}
-
-ResposeData AccessControl::GrantAdminRole(int sender, int user)
-{
-	ResposeData response;
-	response.Response = "";
-	response.Success = false;
-
-	return response;
-}
-
-ResposeData AccessControl::AssignRole(int id, ROLE role)
-{
-	ResposeData response;
-	response.Response = "";
-	response.Success = false;
-
-	auto Val = Database.find(id);
-
-	if (Val == Database.end())
+	if (User != Database.end())
 	{
-		response.Success = Database.emplace(id, role).second;
-	}
-	else if (Val->second != role)
-	{
-		Val->second = role;
-		response.Success = true;
+		response.Response = "ERROR: User already exists!";
+		return response;
 	}
 
-	if (response.Success == false)
-		response.Response = "Unable to assign role! User not found or it has the same role.";
+	auto Sender = Database.find(sender);
+
+	if (Sender == Database.end() || Sender->second != ROLE::Admin)
+	{
+		response.Response = "ERROR: Sender not found or not an admin!";
+		return response;
+	}
+
+	Database.emplace(newUser, ROLE::User);
+
+	response.Response = "User registered.";
+	response.Success = true;
+	return response;
+}
+
+ResposeData AccessControl::AC_GrantModeratorRole(int sender, int user)
+{
+	ResposeData response;
+	response.Response = "";
+	response.Success = false;
+
+	return response;
+}
+
+ResposeData AccessControl::AC_GrantAdminRole(int sender, int user)
+{
+	ResposeData response;
+	response.Response = "";
+	response.Success = false;
 
 	return response;
 }
