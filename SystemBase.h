@@ -1,8 +1,9 @@
 #pragma once
+#include "AccessControl.h"
+#include "Pausable.h"
 
-#include "common.h"
-
-class SystemBase {
+class SystemBase : public Pausable, AccessControl
+{
 public:
 	SystemBase(int admin);
 	ResposeData BanUser(int sender, int user);
@@ -12,4 +13,5 @@ public:
 	ResposeData GrantAdminRole(int sender, int user);
 	ResposeData StopChat(int sender);
 	ResposeData ResumeChat(int sender);
+	bool TestRunning();
 };

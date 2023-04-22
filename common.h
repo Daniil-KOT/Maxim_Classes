@@ -17,4 +17,4 @@ struct ResposeData
 	std::string Response;
 };
 
-std::map<int, ROLE> Database;
+_declspec(selectany) std::map<int, ROLE> Database;
